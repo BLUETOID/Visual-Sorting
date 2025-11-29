@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Sorting</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo" id="logoHome" style="cursor: pointer;" title="Return to Home">
+            <span class="logo-text">Visual Sorting</span>
+            <span class="logo-subtitle">ALGORITHM</span>
+        </div>
+        <div class="header-controls">
+            <!-- Custom Array Input -->
+            <input type="text" id="customArrayInput" class="custom-input" placeholder="Custom array (e.g. 5,2,8,1,9)" title="Enter comma-separated numbers">
+            <button id="applyCustomArray" class="apply-btn" title="Apply Custom Array">Apply</button>
+            
+            <!-- Volume Control -->
+            <div class="volume-control">
+                <svg class="volume-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="15" title="Volume">
+            </div>
+            
+            <!-- Theme Selector -->
+            <select id="themeSelect" class="theme-select" title="Select Theme">
+                <option value="dark"> Dark</option>
+                <option value="midnight"> Midnight</option>
+                <option value="ocean"> Ocean</option>
+                <option value="forest"> Forest</option>
+                <option value="sunset"> Sunset</option>
+                <option value="neon"> Neon</option>
+                <option value="retro"> Retro</option>
+                <option value="light"> Light</option>
+            </select>
+            
+            <button id="soundToggle" class="sound-btn active" title="Toggle Sound (S)">
+                <svg class="sound-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <path class="sound-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                </svg>
+            </button>
+            <select id="soundType" class="sound-select">
+                <option value="piano"> Piano</option>
+                <option value="synth"> Synth</option>
+                <option value="triangle" selected> Triangle</option>
+                <option value="sine"> Sine</option>
+                <option value="square"> Square</option>
+                <option value="sawtooth"> Sawtooth</option>
+                <option value="bell"> Bell</option>
+                <option value="marimba"> Marimba</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Main Visualizer Canvas -->
+    <main class="visualizer-container">
+        <canvas id="visualizer"></canvas>
+        
+        <!-- Compare Mode Canvases (hidden by default) -->
+        <div class="compare-container" style="display: none;">
+            <div class="compare-panel">
+                <div class="compare-header">
+                    <select id="algo1Select" class="compare-algo-select">
+                        <option value="bubble" selected>Bubble Sort</option>
+                        <option value="selection">Selection Sort</option>
+                        <option value="insertion">Insertion Sort</option>
+                        <option value="merge">Merge Sort</option>
+                        <option value="quick">Quick Sort</option>
+                        <option value="heap">Heap Sort</option>
+                        <option value="shell">Shell Sort</option>
+                        <option value="comb">Comb Sort</option>
+                        <option value="cocktail">Cocktail Sort</option>
+                        <option value="gnome">Gnome Sort</option>
+                        <option value="cycle">Cycle Sort</option>
+                        <option value="pancake">Pancake Sort</option>
+                        <option value="tim">Tim Sort</option>
+                        <option value="intro">Intro Sort</option>
+                        <option value="bitonic">Bitonic Sort</option>
+                        <option value="radix">Radix Sort</option>
+                    </select>
+                    <div class="compare-stats">
+                        <span>Comparisons: <strong id="comparisons1">0</strong></span>
+                        <span>Swaps: <strong id="swaps1">0</strong></span>
+                        <span>Time: <strong id="time1">0ms</strong></span>
+                    </div>
+                </div>
+                <canvas id="visualizer1"></canvas>
+            </div>
+            <div class="compare-panel">
+                <div class="compare-header">
+                    <select id="algo2Select" class="compare-algo-select">
+                        <option value="bubble">Bubble Sort</option>
+                        <option value="selection">Selection Sort</option>
+                        <option value="insertion">Insertion Sort</option>
+                        <option value="merge" selected>Merge Sort</option>
+                        <option value="quick">Quick Sort</option>
+                        <option value="heap">Heap Sort</option>
+                        <option value="shell">Shell Sort</option>
+                        <option value="comb">Comb Sort</option>
+                        <option value="cocktail">Cocktail Sort</option>
+                        <option value="gnome">Gnome Sort</option>
+                        <option value="cycle">Cycle Sort</option>
+                        <option value="pancake">Pancake Sort</option>
+                        <option value="tim">Tim Sort</option>
+                        <option value="intro">Intro Sort</option>
+                        <option value="bitonic">Bitonic Sort</option>
+                        <option value="radix">Radix Sort</option>
+                    </select>
+                    <div class="compare-stats">
+                        <span>Comparisons: <strong id="comparisons2">0</strong></span>
+                        <span>Swaps: <strong id="swaps2">0</strong></span>
+                        <span>Time: <strong id="time2">0ms</strong></span>
+                    </div>
+                </div>
+                <canvas id="visualizer2"></canvas>
+            </div>
+        </div>
+        
+        <!-- Study Mode Container (hidden by default) -->
+        <div class="study-container" style="display: none;">
+            <div class="study-sidebar">
+                <h3>Select Algorithm</h3>
+                <div class="study-algo-list" id="studyAlgoList">
+                    <button class="study-algo-btn active" data-algo="bubble">Bubble Sort</button>
+                    <button class="study-algo-btn" data-algo="selection">Selection Sort</button>
+                    <button class="study-algo-btn" data-algo="insertion">Insertion Sort</button>
+                    <button class="study-algo-btn" data-algo="merge">Merge Sort</button>
+                    <button class="study-algo-btn" data-algo="quick">Quick Sort</button>
+                    <button class="study-algo-btn" data-algo="heap">Heap Sort</button>
+                    <button class="study-algo-btn" data-algo="shell">Shell Sort</button>
+                    <button class="study-algo-btn" data-algo="comb">Comb Sort</button>
+                    <button class="study-algo-btn" data-algo="cocktail">Cocktail Sort</button>
+                    <button class="study-algo-btn" data-algo="gnome">Gnome Sort</button>
+                    <button class="study-algo-btn" data-algo="cycle">Cycle Sort</button>
+                    <button class="study-algo-btn" data-algo="pancake">Pancake Sort</button>
+                    <button class="study-algo-btn" data-algo="tim">Tim Sort</button>
+                    <button class="study-algo-btn" data-algo="intro">Intro Sort</button>
+                    <button class="study-algo-btn" data-algo="bitonic">Bitonic Sort</button>
+                    <button class="study-algo-btn" data-algo="radix">Radix Sort</button>
+                </div>
+            </div>
+            <div class="study-main">
+                <div class="study-header">
+                    <h2 id="studyAlgoTitle">Bubble Sort</h2>
+                    <div class="study-controls">
+                        <button id="studyPlayBtn" class="study-btn primary">Play</button>
+                        <button id="studyPauseBtn" class="study-btn" style="display: none;">Pause</button>
+                        <button id="studyStepBtn" class="study-btn">Step</button>
+                        <button id="studyResetBtn" class="study-btn">Reset</button>
+                        <label class="study-speed-label">
+                            Speed:
+                            <input type="range" id="studySpeed" class="study-speed-slider" min="1" max="100" value="30">
+                        </label>
+                    </div>
+                </div>
+                <div class="study-visual">
+                    <div class="study-array-display" id="studyArrayDisplay">
+                        <div class="array-label">Array:</div>
+                        <div class="array-container" id="studyArrayContainer"></div>
+                    </div>
+                    <div class="study-explanation" id="studyExplanation">
+                        <h4>Current Step:</h4>
+                        <p id="studyStepText">Click Play or Step to begin</p>
+                    </div>
+                </div>
+                <div class="study-info-tabs">
+                    <div class="study-tabs">
+                        <button class="study-tab active" data-tab="overview">Overview</button>
+                        <button class="study-tab" data-tab="code">Code</button>
+                        <button class="study-tab" data-tab="complexity">Complexity</button>
+                    </div>
+                    <div class="study-tab-content">
+                        <div class="study-tab-panel active" id="overviewPanel">
+                            <h3>How it works</h3>
+                            <p id="studyDescription">Loading...</p>
+                            <div style="background: var(--bg-tertiary); border-left: 3px solid var(--accent-primary); padding: 12px; margin: 16px 0; border-radius: 4px;">
+                                <strong style="color: var(--accent-primary);">📊 Visualization:</strong>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;"> Array elements shown above represent the data being sorted. Watch how elements change color during comparisons (yellow), swaps (red), and when sorted (green)!</span>
+                            </div>
+                            <h3>Properties</h3>
+                            <ul id="studyProperties"></ul>
+                        </div>
+                        <div class="study-tab-panel" id="codePanel">
+                            <h3>Implementation</h3>
+                            <pre><code id="studyCode" class="language-javascript"></code></pre>
+                        </div>
+                        <div class="study-tab-panel" id="complexityPanel">
+                            <h3>Time Complexity</h3>
+                            <table class="complexity-table">
+                                <tr><td>Best Case:</td><td id="studyBest">-</td></tr>
+                                <tr><td>Average Case:</td><td id="studyAverage">-</td></tr>
+                                <tr><td>Worst Case:</td><td id="studyWorst">-</td></tr>
+                            </table>
+                            <h3>Space Complexity</h3>
+                            <p id="studySpace">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benchmark Mode Container (hidden by default) -->
+        <div class="benchmark-container" style="display: none;">
+            <div class="benchmark-header">
+                <h2>Benchmark Mode - Algorithm Performance Race</h2>
+                <div class="benchmark-controls">
+                    <button id="benchmarkStartBtn" class="benchmark-btn primary">Start Benchmark</button>
+                    <button id="benchmarkStopBtn" class="benchmark-btn danger" style="display: none;">Stop Benchmark</button>
+                    <select id="benchmarkCase" class="benchmark-select">
+                        <option value="random">Random Array</option>
+                        <option value="sorted">Best Case (Sorted)</option>
+                        <option value="reverse">Worst Case (Reverse)</option>
+                        <option value="nearly">Nearly Sorted</option>
+                    </select>
+                </div>
+            </div>
+            <div class="benchmark-content">
+                <div class="benchmark-grid" id="benchmarkGrid">
+                    <!-- Algorithm visualizers will be inserted here -->
+                </div>
+                <div class="benchmark-leaderboard">
+                    <h3>Leaderboard</h3>
+                    <div class="leaderboard-filters">
+                        <button class="filter-btn active" data-filter="time">Time</button>
+                        <button class="filter-btn" data-filter="comparisons">Comparisons</button>
+                    </div>
+                    <div id="leaderboardList" class="leaderboard-list">
+                        <div class="leaderboard-empty">Run benchmark to see results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Control Panel -->
+    <footer class="control-panel">
+        <!-- Algorithm Selection Grid -->
+        <div class="algorithm-grid">
+            <button class="algo-btn active" data-algo="bubble">Bubble Sort</button>
+            <button class="algo-btn" data-algo="insertion">Insertion Sort</button>
+            <button class="algo-btn" data-algo="heap">Heap Sort</button>
+            <button class="algo-btn" data-algo="cycle">Cycle Sort</button>
+            <button class="algo-btn" data-algo="quick">Quick Sort</button>
+            <button class="algo-btn" data-algo="selection">Selection Sort</button>
+            <button class="algo-btn" data-algo="bitonic">Bitonic Sort</button>
+            <button class="algo-btn" data-algo="cocktail">Cocktail Sort</button>
+            <button class="algo-btn" data-algo="shell">Shell Sort</button>
+            <button class="algo-btn" data-algo="radix">Radix LSD Sort</button>
+            <button class="algo-btn" data-algo="tim">Tim Sort</button>
+            <button class="algo-btn" data-algo="pancake">Pancake Sort</button>
+            <button class="algo-btn" data-algo="merge">Merge Sort</button>
+            <button class="algo-btn" data-algo="comb">Comb Sort</button>
+            <button class="algo-btn" data-algo="gnome">Gnome Sort</button>
+            <button class="algo-btn" data-algo="intro">Intro Sort</button>
+            <button class="algo-btn compare-toggle" data-algo="compare">
+                <span class="arrow">→</span> Compare Mode
+            </button>
+            <button class="algo-btn benchmark-toggle" data-algo="benchmark">
+                Benchmark Mode
+            </button>
+            <button class="algo-btn study-toggle" data-algo="study">
+                Study Mode
+            </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="startBtn" class="action-btn primary" title="Start sorting (Space)">Start</button>
+            <button id="stopBtn" class="action-btn danger" style="display: none;" title="Stop sorting (Space)">Stop</button>
+            <button id="stepBtn" class="action-btn" title="Step forward one operation (→)">Step</button>
+            <button id="shuffleBtn" class="action-btn" title="Shuffle array (R)">Shuffle</button>
+            <button id="algoInfoBtn" class="action-btn info" title="Algorithm info (I)">Info</button>
+            
+            <div class="preset-buttons">
+                <button id="reverseBtn" class="preset-btn">Reverse</button>
+                <button id="valleyBtn" class="preset-btn">Valley</button>
+                <button id="mountainBtn" class="preset-btn">Mountain</button>
+            </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="slider-controls">
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Array size</span>
+                    <span id="arraySizeValue" class="slider-value">300 bars</span>
+                </div>
+                <input type="range" id="arraySize" min="10" max="500" value="300" class="slider">
+            </div>
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Speed</span>
+                    <span id="delayValue" class="slider-value">Fast</span>
+                </div>
+                <input type="range" id="speed" min="0" max="100" value="98" class="slider">
+            </div>
+        </div>
+    </footer>
+
+    <!-- Hidden elements for compatibility -->
+    <div style="display:none;">
+        <select id="algorithm">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+            <option value="heap">Heap Sort</option>
+            <option value="shell">Shell Sort</option>
+            <option value="comb">Comb Sort</option>
+            <option value="cocktail">Cocktail Sort</option>
+            <option value="gnome">Gnome Sort</option>
+            <option value="cycle">Cycle Sort</option>
+            <option value="pancake">Pancake Sort</option>
+            <option value="tim">Tim Sort</option>
+            <option value="intro">Intro Sort</option>
+            <option value="bitonic">Bitonic Sort</option>
+            <option value="radix">Radix Sort</option>
+        </select>
+        <select id="algorithm2">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge" selected>Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+            <option value="heap">Heap Sort</option>
+        </select>
+        <span id="comparisons">0</span>
+        <span id="swaps">0</span>
+        <span id="status">Ready</span>
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="resetBtn">Reset</button>
+        <div id="stats1"></div>
+        <button id="singleModeBtn" class="active">Single</button>
+        <button id="compareModeBtn">Compare</button>
+        <input type="checkbox" id="soundToggleCheckbox" checked>
+    </div>
+
+    <!-- Algorithm Info Modal -->
+    <div id="algoInfoModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="algoInfoTitle">Algorithm Information</h2>
+            <div id="algoInfoBody">
+                <div class="info-section">
+                    <h3>Time Complexity</h3>
+                    <p><strong>Best Case:</strong> <span id="infoBest">-</span></p>
+                    <p><strong>Average Case:</strong> <span id="infoAverage">-</span></p>
+                    <p><strong>Worst Case:</strong> <span id="infoWorst">-</span></p>
+                </div>
+                <div class="info-section">
+                    <h3>Space Complexity</h3>
+                    <p><span id="infoSpace">-</span></p>
+                </div>
+                <div class="info-section">
+                    <h3>Properties</h3>
+                    <p id="infoProperties">-</p>
+                </div>
+                <div class="info-section">
+                    <h3>Description</h3>
+                    <p id="infoDescription">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
